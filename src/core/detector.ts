@@ -12,7 +12,7 @@ export class ConfigDetector {
     const results: DetectionResult[] = [];
 
     for (const provider of this.registry.getAll()) {
-      // Ignora providers globais na detecção (não pertencem a nenhum projeto)
+      // Skip global providers during detection because they do not belong to a project.
       if (!provider.config.supportsProjectConfig) continue;
       if (!provider.exists(this.projectRoot)) continue;
 
@@ -25,7 +25,7 @@ export class ConfigDetector {
           servers: Object.keys(servers),
         });
       } catch {
-        // Arquivo existe mas nao pode ser parseado, ignora
+        // Ignore files that exist but cannot be parsed.
       }
     }
 

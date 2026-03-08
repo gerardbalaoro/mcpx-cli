@@ -4,13 +4,14 @@ import type { CommandContext } from '../types/common.js';
 import { ConfigStore } from '../core/config-store.js';
 import { createRegistry } from '../providers/registry.js';
 import { readTextFile, fileExists } from '../utils/fs.js';
+import { LL } from '../i18n/index.js';
 
 export async function statusCommand(ctx: CommandContext): Promise<void> {
   const store = new ConfigStore(ctx.projectRoot);
 
   if (!store.exists()) {
-    p.log.warn('Nenhum .mcpx.json encontrado neste diretorio.');
-    p.log.info('Execute "mcpx init" para criar uma configuracao.');
+    p.log.warn(LL.common.noConfigFound());
+    p.log.info(LL.common.runInit());
     return;
   }
 
@@ -34,14 +35,14 @@ export async function statusCommand(ctx: CommandContext): Promise<void> {
 
     let status: string;
     if (!fileExists(filePath)) {
-      status = pc.red('ausente');
+      status = pc.red(LL.statusCommand.missing());
       hasDesync = true;
     } else {
       const currentContent = readTextFile(filePath);
       if (currentContent === expectedContent) {
-        status = pc.green('sync');
+        status = pc.green(LL.statusCommand.inSync());
       } else {
-        status = pc.yellow('desync');
+        status = pc.yellow(LL.statusCommand.outOfSync());
         hasDesync = true;
       }
     }
@@ -51,12 +52,15 @@ export async function statusCommand(ctx: CommandContext): Promise<void> {
 
   p.note(
     lines.join('\n'),
-    `${serverCount} servidor(es), ${config.providers.length} provider(s)`,
+    LL.statusCommand.summaryTitle({
+      serverCount,
+      providerCount: config.providers.length,
+    }),
   );
 
   if (hasDesync) {
-    p.log.warn('Alguns providers estao desatualizados. Execute "mcpx sync" para atualizar.');
+    p.log.warn(LL.statusCommand.someOutdated());
   } else {
-    p.log.success('Todos os providers estao sincronizados.');
+    p.log.success(LL.statusCommand.allSynced());
   }
 }

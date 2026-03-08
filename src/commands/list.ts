@@ -3,13 +3,14 @@ import pc from 'picocolors';
 import type { CommandContext } from '../types/common.js';
 import { ConfigStore } from '../core/config-store.js';
 import { createRegistry } from '../providers/registry.js';
+import { LL } from '../i18n/index.js';
 
 export async function listCommand(ctx: CommandContext): Promise<void> {
   const store = new ConfigStore(ctx.projectRoot);
 
   if (!store.exists()) {
-    p.log.warn('Nenhum .mcpx.json encontrado neste diretorio.');
-    p.log.info('Execute "mcpx init" para criar uma configuracao.');
+    p.log.warn(LL.common.noConfigFound());
+    p.log.info(LL.common.runInit());
     return;
   }
 
@@ -18,12 +19,12 @@ export async function listCommand(ctx: CommandContext): Promise<void> {
   const servers = Object.entries(config.servers);
 
   if (servers.length === 0) {
-    p.log.info('Nenhum servidor MCP configurado.');
+    p.log.info(LL.listCommand.noServerConfigured());
     return;
   }
 
   const lines = servers.map(([name, server]) => {
-    const status = server.enabled === false ? pc.dim(' [desabilitado]') : '';
+    const status = server.enabled === false ? pc.dim(LL.listCommand.disabledSuffix()) : '';
     const cmd =
       server.transport === 'stdio'
         ? `${server.command} ${(server.args ?? []).join(' ')}`
@@ -32,11 +33,11 @@ export async function listCommand(ctx: CommandContext): Promise<void> {
     return `${pc.bold(name)} ${pc.dim(`(${server.transport})`)}${status}\n  ${pc.cyan(cmd)}${desc}`;
   });
 
-  p.note(lines.join('\n\n'), 'Servidores MCP');
+  p.note(lines.join('\n\n'), LL.listCommand.title());
 
   const providerNames = config.providers
     .map((pn) => registry.get(pn)?.config.displayName ?? pn)
     .join(', ');
 
-  p.log.info(`Providers habilitados: ${providerNames || 'nenhum'}`);
+  p.log.info(LL.listCommand.enabledProviders({ providers: providerNames || LL.common.none() }));
 }

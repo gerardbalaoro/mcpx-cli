@@ -5,8 +5,8 @@ export const BACK = Symbol('BACK');
 export type BackSignal = typeof BACK;
 
 /**
- * Verifica se o resultado de um prompt clack foi cancelado (Ctrl+C / Esc).
- * Retorna BACK se cancelado, senão retorna o valor original.
+ * Checks whether a clack prompt result was cancelled (Ctrl+C / Esc).
+ * Returns BACK when cancelled; otherwise returns the original value.
  */
 export function handleCancel<T>(value: T | symbol): T | BackSignal {
   if (isCancel(value)) return BACK;
@@ -16,9 +16,9 @@ export function handleCancel<T>(value: T | symbol): T | BackSignal {
 export type Step<S> = (state: Partial<S>) => Promise<Partial<S> | BackSignal | null>;
 
 /**
- * Executa etapas sequenciais com navegação para trás.
- * Ctrl+C/Esc em qualquer etapa volta ao passo anterior.
- * Na primeira etapa, cancela o wizard.
+ * Runs sequential steps with backward navigation.
+ * Ctrl+C/Esc on any step moves back to the previous step.
+ * On the first step, it cancels the wizard.
  */
 export async function runSteps<S>(steps: Step<S>[], initialState: Partial<S> = {}): Promise<S | null> {
   const stateHistory: Partial<S>[] = [{ ...initialState }];
