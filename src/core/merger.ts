@@ -64,7 +64,7 @@ export function cleanupRemovedProviders(
       });
     }
 
-    // Limpa arquivo legado no projeto (para providers globais)
+    // Clean up the legacy project file for global providers.
     if (!provider.config.supportsProjectConfig && provider.config.globalConfigPath) {
       const projectFilePath = nodePath.join(projectRoot, provider.config.configPath);
       try {
@@ -72,7 +72,7 @@ export function cleanupRemovedProviders(
           results.push({ provider: provider.config.name, filePath: projectFilePath, status: 'deleted' });
         }
       } catch {
-        // ignora erro ao limpar legado
+        // Ignore cleanup errors for legacy files.
       }
     }
   }

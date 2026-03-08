@@ -1,7 +1,7 @@
 {
   "name": "mcpx-cli",
   "version": "0.2.0",
-  "description": "CLI interativa para configurar servidores MCP para multiplos providers de IA",
+  "description": "Interactive CLI for configuring MCP servers for multiple AI providers",
   "type": "module",
   "bin": {
     "mcpx": "./dist/bin/mcpx.js"
@@ -34,7 +34,8 @@
     "test:run": "vitest run",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "typesafe-i18n": "typesafe-i18n"
   },
   "keywords": [
     "mcp",
@@ -60,6 +61,7 @@
     "commander": "^13.0.0",
     "picocolors": "^1.1.0",
     "smol-toml": "^1.3.0",
+    "typesafe-i18n": "^5.27.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {

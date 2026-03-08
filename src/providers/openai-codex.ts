@@ -39,7 +39,7 @@ export class OpenAICodexProvider implements Provider {
         existing['mcp_servers'] = mcpServers;
         return stringifyToml(existing) + '\n';
       } catch {
-        // Se o parse falhar, gera do zero
+        // If parsing fails, regenerate the file from scratch.
       }
     }
 

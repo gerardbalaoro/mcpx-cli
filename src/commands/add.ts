@@ -4,13 +4,14 @@ import { ConfigStore } from '../core/config-store.js';
 import { createRegistry } from '../providers/registry.js';
 import { syncAllProviders } from '../core/merger.js';
 import { runServerWizard } from '../wizard/server-wizard.js';
+import { LL } from '../i18n/index.js';
 
 export async function addCommand(ctx: CommandContext, serverName?: string): Promise<void> {
   const store = new ConfigStore(ctx.projectRoot);
 
   if (!store.exists()) {
-    p.log.warn('Nenhum .mcpx.json encontrado neste diretorio.');
-    p.log.info('Execute "mcpx init" para criar uma configuracao.');
+    p.log.warn(LL.common.noConfigFound());
+    p.log.info(LL.common.runInit());
     return;
   }
 
@@ -18,18 +19,18 @@ export async function addCommand(ctx: CommandContext, serverName?: string): Prom
   const existingNames = Object.keys(config.servers);
 
   if (serverName && config.servers[serverName]) {
-    p.log.warn(`Servidor "${serverName}" ja existe. Use outro nome.`);
+    p.log.warn(LL.addCommand.serverAlreadyExists({ name: serverName }));
     return;
   }
 
   const result = await runServerWizard(existingNames);
   if (!result) {
-    p.cancel('Operacao cancelada.');
+    p.cancel(LL.common.operationCancelled());
     return;
   }
 
   const updatedConfig = store.addServer(result.name, result.config);
-  p.log.success(`Servidor "${result.name}" adicionado ao .mcpx.json`);
+  p.log.success(LL.addCommand.serverAddedToConfig({ name: result.name }));
 
   const registry = createRegistry();
   const providers = registry.getByNames(updatedConfig.providers);
@@ -39,7 +40,7 @@ export async function addCommand(ctx: CommandContext, serverName?: string): Prom
     if (r.status === 'error') {
       p.log.error(`${r.filePath}: ${r.error}`);
     } else if (r.status !== 'unchanged') {
-      p.log.success(`Atualizado: ${r.filePath}`);
+      p.log.success(LL.addCommand.updatedFile({ filePath: r.filePath }));
     }
   }
 }

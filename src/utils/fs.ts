@@ -59,7 +59,7 @@ export function ensureShellAlias(alias: string, command: string): boolean {
 
   const content = fs.readFileSync(rcFile, 'utf-8');
   if (content.includes(`alias ${alias}=`) || content.includes(`alias ${alias} `)) {
-    // Atualiza alias antigo (--config-dir) para o novo (--additional-mcp-config)
+    // Update the old alias (--config-dir) to the new one (--additional-mcp-config).
     if (content.includes('--config-dir ./.copilot') && !content.includes('--additional-mcp-config')) {
       const updated = content.replace(
         /alias copilot='copilot --config-dir \.\/\.copilot'/g,
@@ -72,8 +72,8 @@ export function ensureShellAlias(alias: string, command: string): boolean {
   }
 
   const line = shell.includes('fish')
-    ? `\n# MCPX - ${alias} com config MCP do projeto\nalias ${alias} '${command}'`
-    : `\n# MCPX - ${alias} com config MCP do projeto\nalias ${alias}='${command}'`;
+    ? `\n# MCPX - ${alias} with project MCP config\nalias ${alias} '${command}'`
+    : `\n# MCPX - ${alias} with project MCP config\nalias ${alias}='${command}'`;
 
   fs.appendFileSync(rcFile, line + '\n', 'utf-8');
   return true;
